@@ -3,7 +3,7 @@ PUC Minas - Campus Coração Eucarístico
 Processamento e Análise de Imagens - Trabalho prático pt. 1
     Arthur Vinícius - #666455
     Lucas Baesse
-    Gabriel Costa
+    Gabriel Costa Pinto - #665131
     Yago Duarte
 
 O trabalho prático consiste em uma interface gráfica via terminal para processamento de operações
