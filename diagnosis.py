@@ -2,9 +2,9 @@
 PUC Minas - Campus Coração Eucarístico
 Processamento e Análise de Imagens - Trabalho prático pt. 1
     Arthur Vinícius - #666455
-    Lucas Baesse
-    Gabriel Costa
-    Yago Duarte
+    Lucas Baesse - #667339
+    Gabriel Costa - #665131
+    Yago Faria - #652289
 
 O trabalho prático consiste em uma interface gráfica via terminal para processamento de operações
 referentes a imagens via input do usuário. Estas consistem em:
@@ -17,21 +17,39 @@ import os
 import cv2 as cv
 
 def get_img_path():
+    '''Função para obter o nome e extensão de imagem dado input do usuário.'''
     print('Por favor, coloque o nome e a extensão da imagem.\n')
     img_name = input()
     return img_name
 
 def img_read(img_name):
+    '''Função para ler uma imagem de acordo com o nome dado pelo usuário.
+
+    :param img_name: Nome e extensão de imagem.
+    :returns: Uma imagem.
+    '''
     img = cv.imread(f'photos/{img_name}')
     return img
 
 def img_show(img_name):
+    '''Função para mostrar uma imagem de acordo com o nome dado pelo usuário.
+    
+    :param img_name: Nome e extensão de imagem.
+    '''
     img = img_read(img_name)
     cv.imshow(img_name, img)
 
 x_start, y_start, x_end, y_end = 0, 0, 0, 0
 cropping = False
 def img_crop(event, x, y, flags, param):
+    '''Função para corte de imagens.
+
+    :param event: Evento referente ao clique do mouse
+    :param x: Posição x do mouse
+    :param y: Posição y do mouse
+    :param flags: Argumento base do método setMouseCallback
+    :param param: Argumento base do método setMouseCallback
+    '''
     global x_start, y_start, x_end, y_end, cropping
    
     if event == cv.EVENT_LBUTTONDOWN:
@@ -85,5 +103,3 @@ if __name__ == '__main__':
         os.system('cls' if os.name == 'nt' else 'clear')
         print('Pressione qualquer tecla para sair.')
         cv.waitKey(0)
-
-        
