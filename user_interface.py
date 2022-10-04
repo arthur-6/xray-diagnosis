@@ -1,3 +1,10 @@
+'''
+PUC Minas - Campus Coração Eucarístico
+Processamento e Análise de Imagens - Trabalho prático pt. 1
+    Arthur Vinícius - #666455
+    Gabriel Costa - #665131
+'''
+
 import PySimpleGUI as sg
 import cv2 as cv
 
