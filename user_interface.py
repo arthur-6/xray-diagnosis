@@ -6,7 +6,7 @@ import diagnosis as dg
 
 sg.theme('BlueMono')
 x_start, y_start, x_end, y_end = 0, 0, 0, 0
-cropping = False    
+cropping = False
 
 def img_crop(event, x, y, flags, param):
     '''Função para corte de imagens.
@@ -34,29 +34,7 @@ def img_crop(event, x, y, flags, param):
         if len(refPoint) == 2:
             roi = oriImage[refPoint[0][1]:refPoint[1][1], refPoint[0][0]:refPoint[1][0]]
             cv.imshow("corte", roi)
-            save_window(roi)
-
-#TODO abrir uma janela pra perguntar o nome do arquivo a ser salvo
-def save_window(img):
-    save_layout = [
-        [sg.Text('Nome do arquivo a ser salvo', font=('Corbel', 12))],
-        [sg.InputText(key='file_name')],
-        [sg.Button('Salvar', font=('Corbel', 12), key='Salvar'), 
-        sg.Button('Cancelar', font=('Corbel', 12), button_color='#eb4034', key='Cancelar')]
-    ]
-    save_window = sg.Window('Salvar', save_layout)
-
-    while True:
-        event, values = save_window.read()
-        if event == 'Cancelar' or event == sg.WIN_CLOSED:
-            break
-        elif event == 'Salvar':
-            file_name = values['file_name'].strip()
-            if file_name:
-                cv.imwrite(f'photos/{file_name}.jpg', img)
-                break
-            break
-    save_window.close()
+            cv.imwrite(f'photos/cropped_image.jpg', roi)
 
 def menu_window():
     menu_layout = [
@@ -78,9 +56,9 @@ def menu_window():
 def view_img_window():
     file_list_column = [[
         sg.Text("Buscar arquivo"),
-        sg.In(size=(25, 1), enable_events=True, key="folder"),
+        sg.In(size=(40, 1), enable_events=True, key="folder"),
         sg.FolderBrowse()],
-        [sg.Listbox(values=[], size=(46, 20), key="file_list")]
+        [sg.Listbox(values=[], size=(61, 20), key="file_list")]
     ]
     layout = [
         [sg.Column(file_list_column)],
@@ -138,23 +116,25 @@ def view_img_window():
                 if not cropping:
                     cv.imshow(filename, img)
                 elif cropping:
-                    cv.rectangle(i, (x_start, y_start), (x_end, y_end), (255, 0, 0), 2)
-                    cv.imshow('cropped', i)
+                    cv.rectangle(img, (x_start, y_start), (x_end, y_end), (255, 0, 0), 2)
+                    # cv.imshow('cropped', i)
             except:
                 pass
         elif event == 'Reconhecer imagem':
            #TODO passar ambas as imagens para serem selecionáveis 
             try:
-                img_name = get_img_path()
-                img = img_read(img_name)
-                template = cv.imread(f'photos\cropped_{img_name}',0)
+                filename = os.path.join(
+                    values["folder"], values["file_list"][0]
+                )
+                img = dg.img_read(filename)
+                template = cv.imread(f'photos/cropped_image.jpg', 0)
                 
                 img_gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
                 w, h = template.shape[::-1]
 
-                res = cv.matchTemplate(img_gray,template,cv.TM_CCOEFF_NORMED)
+                res = cv.matchTemplate(img_gray, template, cv.TM_CCOEFF_NORMED)
                 threshold = 0.8
-                loc = np.where( res >= threshold)
+                loc = np.where(res >= threshold)
                 for pt in zip(*loc[::-1]):
                     cv.rectangle(img, pt, (pt[0] + w, pt[1] + h), (0,0,255), 2)
 
@@ -162,6 +142,26 @@ def view_img_window():
             except:
                 pass
     img_view_window.close()
+
+def save_window(img):
+    save_layout = [
+        [sg.Text('Nome do arquivo a ser salvo', font=('Corbel', 12))],
+        [sg.InputText(key='file_name')],
+        [sg.Button('Salvar', font=('Corbel', 12), key='Salvar'), 
+        sg.Button('Cancelar', font=('Corbel', 12), button_color='#eb4034', key='Cancelar')]
+    ]
+    save_window = sg.Window('Salvar', save_layout)
+
+    while True:
+        save_event, save_values = save_window.read()
+        if save_event == 'Cancelar' or save_event == sg.WIN_CLOSED:
+            break
+        elif save_event == 'Salvar':
+            file_name = save_values['file_name'].strip()
+            if file_name:
+                cv.imwrite(f'photos/{file_name}.jpg', img)
+                break
+    save_window.close()
 
 def main():
     menu_window()
