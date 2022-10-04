@@ -34,6 +34,13 @@ def img_crop(event, x, y, flags, param):
         if len(refPoint) == 2:
             roi = oriImage[refPoint[0][1]:refPoint[1][1], refPoint[0][0]:refPoint[1][0]]
             cv.imshow("corte", roi)
+            #TODO abrir uma janela pra perguntar o nome do arquivo a ser salvo
+            layout = [
+                [sg.Text('Nome do arquivo a ser salvo', font=('Corbel', 12))],
+                [sg.InputText()],
+                [sg.Button('Salvar', font=('Corbel', 12)), sg.Button('Cancelar', font=('Corbel', 12), button_color='#eb4034')]
+            ]
+            
             cv.imwrite(f'photos/cropped.jpg', roi)
 
 def menu_window():
@@ -108,6 +115,7 @@ def view_img_window():
                     values["folder"], values["file_list"][0]
                 )
                 img = dg.img_read(filename)
+                #TODO passar oriImage como parametro pra img_crop e jogar essa porra dessa função pro outro arquivo
                 global oriImage
                 oriImage = img.copy()
 
@@ -122,24 +130,25 @@ def view_img_window():
                     cv.imshow('cropped', i)
             except:
                 pass
-            elif event == 'Reconhecer imagem':
-                try:
-                    img_name = get_img_path()
-                    img = img_read(img_name)
-                    template = cv.imread(f'photos\cropped_{img_name}',0)
-                    
-                    img_gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-                    w, h = template.shape[::-1]
+        elif event == 'Reconhecer imagem':
+           #TODO passar ambas as imagens para serem selecionáveis 
+            try:
+                img_name = get_img_path()
+                img = img_read(img_name)
+                template = cv.imread(f'photos\cropped_{img_name}',0)
+                
+                img_gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+                w, h = template.shape[::-1]
 
-                    res = cv.matchTemplate(img_gray,template,cv.TM_CCOEFF_NORMED)
-                    threshold = 0.8
-                    loc = np.where( res >= threshold)
-                    for pt in zip(*loc[::-1]):
-                        cv.rectangle(img, pt, (pt[0] + w, pt[1] + h), (0,0,255), 2)
+                res = cv.matchTemplate(img_gray,template,cv.TM_CCOEFF_NORMED)
+                threshold = 0.8
+                loc = np.where( res >= threshold)
+                for pt in zip(*loc[::-1]):
+                    cv.rectangle(img, pt, (pt[0] + w, pt[1] + h), (0,0,255), 2)
 
-                    cv.imshow(img_name, img)
-                except:
-                    pass
+                cv.imshow(img_name, img)
+            except:
+                pass
     img_view_window.close()
 
 def main():
