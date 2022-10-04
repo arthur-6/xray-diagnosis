@@ -34,22 +34,35 @@ def img_crop(event, x, y, flags, param):
         if len(refPoint) == 2:
             roi = oriImage[refPoint[0][1]:refPoint[1][1], refPoint[0][0]:refPoint[1][0]]
             cv.imshow("corte", roi)
-            #TODO abrir uma janela pra perguntar o nome do arquivo a ser salvo
-            layout = [
-                [sg.Text('Nome do arquivo a ser salvo', font=('Corbel', 12))],
-                [sg.InputText()],
-                [sg.Button('Salvar', font=('Corbel', 12)), sg.Button('Cancelar', font=('Corbel', 12), button_color='#eb4034')]
-            ]
-            
-            cv.imwrite(f'photos/cropped.jpg', roi)
+            save_window(roi)
+
+#TODO abrir uma janela pra perguntar o nome do arquivo a ser salvo
+def save_window(img):
+    save_layout = [
+        [sg.Text('Nome do arquivo a ser salvo', font=('Corbel', 12))],
+        [sg.InputText(key='file_name')],
+        [sg.Button('Salvar', font=('Corbel', 12), key='Salvar'), 
+        sg.Button('Cancelar', font=('Corbel', 12), button_color='#eb4034', key='Cancelar')]
+    ]
+    save_window = sg.Window('Salvar', save_layout)
+
+    while True:
+        event, values = save_window.read()
+        if event == 'Cancelar' or event == sg.WIN_CLOSED:
+            break
+        elif event == 'Salvar':
+            file_name = values['file_name'].strip()
+            if file_name:
+                cv.imwrite(f'photos/{file_name}.jpg', img)
+                break
+            break
+    save_window.close()
 
 def menu_window():
     menu_layout = [
         [sg.Text('Diagnóstico de Osteoartrite Femorotibial', font=('Cambria', 16), text_color='#ffffff')],
         [sg.Text('_'*30, text_color='#ffffff')],
         [sg.Button('Visualizar imagem', font=('Corbel', 12))],
-        [sg.Button('Cortar imagem', font=('Corbel', 12))],
-        [sg.Button('Buscar região em imagens', font=('Corbel', 12))],
         [sg.Button('Sair', font=('Corbel', 12), button_color='#eb4034')]
     ]
     menu_window = sg.Window('Menu', menu_layout, element_justification='c')
@@ -115,7 +128,6 @@ def view_img_window():
                     values["folder"], values["file_list"][0]
                 )
                 img = dg.img_read(filename)
-                #TODO passar oriImage como parametro pra img_crop e jogar essa porra dessa função pro outro arquivo
                 global oriImage
                 oriImage = img.copy()
 
