@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 import cv2 as cv
+import numpy as np
 
 import os.path
 import diagnosis as dg
@@ -121,24 +122,25 @@ def view_img_window():
             except:
                 pass
         elif event == 'Reconhecer imagem':
-           #TODO passar ambas as imagens para serem selecionáveis 
             try:
                 filename = os.path.join(
                     values["folder"], values["file_list"][0]
                 )
-                img = dg.img_read(filename)
-                template = cv.imread(f'photos/cropped_image.jpg', 0)
+                img = cv.imread(filename)
+                template = cv.imread('photos/cropped_image.jpg')
                 
                 img_gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+                # template_gray = cv.cvtColor(template, cv.COLOR_BGR2GRAY)
+                # cv.imshow('template_cropped', template_gray)
+                
                 w, h = template.shape[::-1]
 
                 res = cv.matchTemplate(img_gray, template, cv.TM_CCOEFF_NORMED)
-                threshold = 0.8
+                threshold = 0.3
                 loc = np.where(res >= threshold)
                 for pt in zip(*loc[::-1]):
                     cv.rectangle(img, pt, (pt[0] + w, pt[1] + h), (0,0,255), 2)
-
-                cv.imshow(img_name, img)
+                cv.imshow('pic', img)
             except:
                 pass
     img_view_window.close()
