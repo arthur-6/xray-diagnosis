@@ -177,7 +177,7 @@ def view_img_window():
 
                 cv.rectangle(img, top_left, bottom_right, 255, 2) # "ploto" um retângulo na imagem original
 
-                plt.subplot(122),plt.imshow(img,cmap = 'gray') # uso imshow para mostrar o resultado na imagem original
+                plt.subplot(111),plt.imshow(img,cmap = 'gray') # uso imshow para mostrar o resultado na imagem original
                 plt.title('Imagem detectada'), plt.xticks([]), plt.yticks([])
                 plt.show()
 
