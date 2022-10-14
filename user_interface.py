@@ -17,7 +17,7 @@ import os.path
 sg.theme('BlueMono')
 x_start, y_start, x_end, y_end = 0, 0, 0, 0
 cropping = False
-def img_crop(event, x, y, flags, param, *args, **kwargs):
+def img_crop(event, x, y, flags, param):
     '''Função para corte de imagens.
 
     :param event: Evento referente ao clique do mouse
@@ -145,7 +145,7 @@ def view_img_window():
                 oriImage = img.copy()
 
                 cv.namedWindow(filename) # chamo a função namedWindow() e passo filename como nome desta. namedWindow é basicamente um placeholder pra imagens
-                cv.setMouseCallback(filename, img_crop(filename)) # chamo a função setMouseCallback(), passo a janela acima e função img_crop() como parâmetros para definir um "evento personalizado"
+                cv.setMouseCallback(filename, img_crop) # chamo a função setMouseCallback(), passo a janela acima e função img_crop() como parâmetros para definir um "evento personalizado"
                 i = img.copy() # copio a imagem original
 
                 if not cropping: # se não está cortando (variável definida globalmente, controlada por img_crop)
