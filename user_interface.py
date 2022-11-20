@@ -68,8 +68,7 @@ def menu_window():
     # aqui defino um título, um separador e dois botões, apresentados na tela inicial
     menu_layout = [
         [sg.Text('Diagnóstico de Osteoartrite Femorotibial', font=('Cambria', 16), text_color='#ffffff')],
-        [sg.Text('_'*30, text_color='#ffffff')],
-        [sg.Button('Visualizar imagem', font=('Corbel', 12))],
+        [sg.Button('Abrir', font=('Corbel', 12), button_color='#24c72f')],
         [sg.Button('Sair', font=('Corbel', 12), button_color='#eb4034')]
     ]
     # para inicializar a janela, uso do método Window() e passo o layout acima como parâmetro
@@ -79,7 +78,7 @@ def menu_window():
         event, values = menu_window.read() # event e values são sempre passados pra definir ações e valores (respectivamente) do usuário na interface gráfica
         if event == 'Sair' or event == sg.WIN_CLOSED: # caso o usuário clique em "Sair" ou feche a janela, sai do loop
             break 
-        elif event == 'Visualizar imagem': # caso o usuário clique em "Visualizar imagem", fecha a atual janela e chama a função view_img_window()
+        elif event == 'Abrir': # caso o usuário clique em "Visualizar imagem", fecha a atual janela e chama a função view_img_window()
             menu_window.close()
             view_img_window()
     menu_window.close()
