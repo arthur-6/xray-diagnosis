@@ -11,12 +11,47 @@ import PySimpleGUI as sg
 import cv2 as cv
 import numpy as np
 from matplotlib import pyplot as plt
+import tensorflow as tf
+from tensorflow.keras.preprocessing import image
 
 import os.path
+
+cat_class_type =  {0:'0',  1 : '1', 2:'2', 3:'3', 4:'4'}
+bin_class_type =  {0:'0',  1 : '1'}
+
+cnn_cat_model = tf.keras.models.load_model('models\cnn_resnet_cat_v2.h5')
+cnn_bin_model = tf.keras.models.load_model('models\cnn_resnet_bin.h5')
 
 sg.theme('BlueMono')
 x_start, y_start, x_end, y_end = 0, 0, 0, 0
 cropping = False
+
+def get_img_array(img_path):
+    path = img_path
+    img = image.load_img(path, target_size=(224,224,3))
+    img = image.img_to_array(img)
+    img = np.expand_dims(img , axis=0)
+
+    return img
+
+def predict_model_cnn_cat(path):
+    img = get_img_array(path)
+
+    res = cat_class_type[np.argmax(cnn_cat_model.predict(img))]
+
+    plt.imshow(img[0]/255, cmap = "gray")
+    plt.title(f"Imagem classe {res}")
+    plt.show()
+
+def predict_model_cnn_bin(path):
+    img = get_img_array(path)
+
+    res = bin_class_type[np.argmax(cnn_bin_model.predict(img))]
+
+    plt.imshow(img[0]/255, cmap = "gray")
+    plt.title(f"Imagem classe {res}")
+    plt.show()
+
 def img_crop(event, x, y, flags, param):
     '''Função para corte de imagens.
 
@@ -98,7 +133,9 @@ def view_img_window():
         [sg.Column(file_list_column)],
         [sg.Button('Abrir imagem', font=('Corbel', 12)),
         sg.Button('Cortar imagem', font=('Corbel', 12)), 
-        sg.Button('Detectar imagem', font=('Corbel', 12)), 
+        sg.Button('Detectar imagem', font=('Corbel', 12)),
+        sg.Button('Preditar imagem - CNN Categórico', font=('Corbel', 12)),
+        sg.Button('Preditar imagem - CNN Binário', font=('Corbel', 12)),
         sg.Button('Voltar', font=('Corbel', 12), button_color='#ed7b09')]
     ]
      # para inicializar a janela, uso do método Window() e passo o layout acima como parâmetro
@@ -179,7 +216,22 @@ def view_img_window():
                 plt.subplot(111),plt.imshow(img,cmap = 'gray') # uso imshow para mostrar o resultado na imagem original
                 plt.title('Imagem detectada'), plt.xticks([]), plt.yticks([])
                 plt.show()
-
+            except:
+                pass
+        elif event == 'Preditar imagem - CNN Categórico':
+            try:
+                filename = os.path.join(
+                    values["folder"], values["file_list"][0]
+                ) # pego o nome completo do diretório aonde a imagem selecionada está
+                predict_model_cnn_cat(filename)
+            except:
+                pass
+        elif event == 'Preditar imagem - CNN Binário':
+            try:
+                filename = os.path.join(
+                    values["folder"], values["file_list"][0]
+                ) # pego o nome completo do diretório aonde a imagem selecionada está
+                predict_model_cnn_bin(filename)
             except:
                 pass
     img_view_window.close()
